@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNTUH NOTES // Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* --- CORE VARIABLES (DEFAULT DARK) --- */
+        :root {
+            --bg-body: #050505;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5; 
+            --accent: #ec4899; 
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --card-hover-bg: rgba(255, 255, 255, 0.06);
+            --input-bg: rgba(0,0,0,0.3);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+            --navbar-bg: rgba(5, 5, 5, 0.7);
+            
+            /* Gradients */
+            --g1: linear-gradient(135deg, #00b09b, #96c93d);
+            --g2: linear-gradient(135deg, #4facfe, #00f2fe);
+            --g3: linear-gradient(135deg, #667eea, #764ba2);
+            --g4: linear-gradient(135deg, #ff0844, #ffb199);
+
+            /* Text Gradient for Hero */
+            --hero-text-gradient: linear-gradient(to right, #fff, #a5b4fc);
+        }
+
+        /* --- LIGHT THEME OVERRIDES (FIXED VISIBILITY) --- */
+        [data-theme="light"] {
+            --bg-body: #f0f2f5;
+            --glass-bg: #ffffff; /* Solid white for better contrast */
+            --glass-border: rgba(0, 0, 0, 0.15); /* Darker border for visibility */
+            --primary: #4338ca; 
+            --accent: #db2777; 
+            --text-main: #1e293b;
+            --text-muted: #475569; /* Darker muted text */
+            --card-hover-bg: #4338ca; /* Make generic cards turn blue on hover so white text is visible */
+            --input-bg: #ffffff;
+            --navbar-bg: rgba(255, 255, 255, 0.9);
+            
+            /* Text Gradient for Hero (Darker for light bg) */
+            --hero-text-gradient: linear-gradient(to right, #1e293b, #4f46e5);
+        }
+
+        /* --- RESET & BODY --- */
+        html { scroll-behavior: smooth; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            /* Dynamic Background Pattern */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            backdrop-filter: blur(15px);
+            background: var(--navbar-bg);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+        
+        /* UPDATED LOGO */
+        .logo { 
+            font-weight: 800; font-size: 1.4rem; cursor: pointer; letter-spacing: 1px; color: var(--text-main); 
+            display: flex; align-items: center; gap: 8px;
+        }
+        .logo i { font-size: 1.8rem; color: var(--primary); }
+        .logo span { color: var(--primary); }
+
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+
+        .nav-menu { display: flex; gap: 20px; }
+        .nav-item { 
+            color: var(--text-muted); text-decoration: none; font-weight: 500; cursor: pointer; transition: 0.3s; position: relative;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--text-main); }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background: var(--primary);
+        }
+        
+        /* Theme Toggle Button */
+        .theme-btn {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1.1rem;
+        }
+        .theme-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: var(--text-main); }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 1rem 20px; /* Reduced top padding */
+            flex: 1;
+            width: 100%;
+        }
+
+        /* --- ANIMATIONS --- */
+        .page-view { display: none; animation: fadeIn 0.5s ease forwards; }
+        .page-view.active-view { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HERO --- */
+        .hero { text-align: center; padding: 2rem 0 3rem 0; }
+        .hero h1 {
+            font-size: 3rem; margin-bottom: 0.5rem;
+            background: var(--hero-text-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+        
+        .subtitle {
+            margin-bottom: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .crumb-item {
+            cursor: pointer;
+            transition: 0.2s;
+            border-bottom: 1px solid transparent;
+        }
+        .crumb-item:hover {
+            color: var(--accent) !important;
+            border-bottom: 1px solid var(--accent);
+        }
+        .crumb-active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* --- HOME GRID STYLES --- */
+        .card-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 12px; 
+            margin-top: 1rem;
+        }
+        
+        .option-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 2rem;
+            border-radius: var(--radius); cursor: pointer; transition: var(--transition);
+            display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Added shadow for visibility in light mode */
+        }
+        
+        .option-card:hover {
+            /* In Light mode, this variable is now Blue, so white text will appear correctly */
+            background: var(--card-hover-bg); 
+            border-color: var(--primary); 
+            transform: translateY(-5px);
+        }
+        
+        .option-card h3 { color: var(--text-main); }
+        .option-card i { font-size: 1.8rem; color: var(--text-muted); transition: 0.3s; }
+        .option-card:hover i { color: var(--primary); }
+
+        /* --- YEAR CARD SPECIFIC STYLES --- */
+        .year-card-1 { border-bottom: 3px solid #00b09b; }
+        .year-card-1:hover { background: var(--g1) !important; border: none; }
+        
+        .year-card-2 { border-bottom: 3px solid #4facfe; }
+        .year-card-2:hover { background: var(--g2) !important; border: none; }
+        
+        .year-card-3 { border-bottom: 3px solid #667eea; }
+        .year-card-3:hover { background: var(--g3) !important; border: none; }
+        
+        .year-card-4 { border-bottom: 3px solid #ff0844; }
+        .year-card-4:hover { background: var(--g4) !important; border: none; }
+
+        /* Ensure text turns white on hover because background becomes colored in both Dark/Light modes now */
+        .option-card:hover h3, .option-card:hover i { color: white !important; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+
+        /* --- SCROLLING TICKER STYLE --- */
+        .ticker-box {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            margin-bottom: 25px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .ticker-label {
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        marquee {
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            width: 100%;
+        }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 480px) {
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr); 
+                gap: 10px;
+            }
+            .option-card {
+                padding: 1.5rem 1rem; 
+                min-height: 110px;
+            }
+            .option-card i { font-size: 1.4rem; margin-bottom: 5px; }
+            .option-card h3 { font-size: 0.9rem; }
+            .hero h1 { font-size: 2.2rem; }
+        }
+
+
+        /* --- STAGES (Home Page Flow) --- */
+        .section-wrapper { display: none; animation: fadeIn 0.5s ease forwards; }
+        .section-wrapper.active-stage { display: block; }
+
+        .stage-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;
+        }
+        .stage-title { text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; color: var(--text-muted); }
+        .back-link {
+            background: transparent; border: none; color: var(--text-main); cursor: pointer;
+            display: flex; align-items: center; gap: 8px; font-size: 0.9rem; opacity: 0.7;
+            padding: 5px 10px; border-radius: 5px; border: 1px solid var(--glass-border);
+        }
+        .back-link:hover { opacity: 1; color: var(--accent); border-color: var(--accent); }
+
+        /* --- TABS --- */
+        .tabs {
+            display: flex; gap: 10px; margin-bottom: 20px; background: var(--glass-bg);
+            padding: 5px; border-radius: 12px; border: 1px solid var(--glass-border);
+        }
+        .tab-btn {
+            background: transparent; border: none; color: var(--text-muted); padding: 10px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; flex: 1; transition: 0.3s;
+        }
+        .tab-btn:hover { color: var(--text-main); background: rgba(125,125,125,0.1); }
+        .tab-btn.active { 
+            background: var(--glass-border); 
+            color: var(--text-main); 
+            border: 1px solid var(--glass-border);
+            /* Fix for light mode active tab visibility */
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- FILE ITEMS --- */
+        .file-item {
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            padding: 1rem; border-radius: 12px; margin-bottom: 10px; cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none; 
+            color: var(--text-main);
+        }
+        /* Hover state for file items needs to handle text color carefully */
+        .file-item:hover { 
+            background: var(--card-hover-bg); 
+            border-color: var(--primary); 
+        }
+        /* In Light Mode, card-hover-bg is Blue, so we need white text. In Dark Mode, it's subtle, so white text is fine. */
+        .file-item:hover h4, .file-item:hover p, .file-item:hover i {
+            color: #fff !important;
+        }
+        
+        /* LOADING SPINNER STYLE */
+        .fa-spinner { 
+            animation: spin 1s linear infinite; 
+            color: var(--primary) !important;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+
+        /* ================= INTEGRATED SECTIONS (UPDATED SPACING) ================= */
+        
+        .home-section-container {
+            margin-top: 1rem; /* Reduced from 5rem */
+            padding-top: 0rem; /* Reduced from 3rem */
+            border-top: 1px solid var(--glass-border);
+        }
+
+        /* Feature Grid (About) */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            padding: 30px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            transition: 0.3s;
+            text-align: center;
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--accent); background: var(--card-hover-bg); }
+        .feature-card:hover h3, .feature-card:hover p, .feature-card:hover i { color: white !important; }
+
+        .feature-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 15px; }
+        .feature-card h3 { margin-bottom: 10px; color: var(--text-main); }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; }
+
+        /* Form Styling */
+        .form-box {
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            max-width: 600px;
+            margin: auto;
+            text-align: left;
+        }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--text-muted); }
+        .input-group input, .input-group textarea, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+        }
+        
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--primary); }
+        
+        /* --- CUSTOM UPLOAD BOX STYLING --- */
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(79, 70, 229, 0.05);
+        }
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        .upload-text {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        .upload-hint {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+        #file-name-display {
+            margin-top: 15px;
+            color: var(--accent);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .submit-btn {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: #fff; border: none; border-radius: 8px;
+            font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s;
+            margin-top: 10px;
+        }
+        .submit-btn:hover { opacity: 0.9; transform: scale(0.98); }
+
+        /* --- FOOTER --- */
+        footer {
+            background: rgba(0, 0, 0, 0.9); 
+            border-top: 1px solid var(--glass-border);
+            padding: 60px 20px 20px;
+            margin-top: auto; 
+            color: #fff;
+        }
+        [data-theme="light"] footer {
+            background: #1e293b; /* Dark footer even in light mode looks better */
+        }
+        
+        .footer-content {
+            max-width: 1200px; margin: auto;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px; margin-bottom: 40px; text-align: left;
+        }
+        /* UPDATED FOOTER HEADINGS COLOR */
+        .footer-col h3 { 
+            font-size: 1.2rem; margin-bottom: 20px; 
+            color: white; /* CHANGED COLOR */
+            position: relative; display: inline-block; 
+        }
+        .footer-col h3::after { 
+            content: ''; position: absolute; left: 0; bottom: -5px; width: 40px; 
+            height: 3px; background: var(--primary); 
+        }
+        .footer-col p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+
+        .footer-links a { 
+            display: block; color: #94a3b8; text-decoration: none; 
+            margin-bottom: 10px; font-size: 0.9rem; transition: 0.3s; 
+        }
+        .footer-links a:hover { color: var(--primary); padding-left: 5px; }
+        
+        .social-icons { display: flex; gap: 15px; margin-top: 15px; }
+        .social-icons a { 
+            width: 40px; height: 40px; background: rgba(255,255,255,0.1); 
+            display: flex; justify-content: center; align-items: center; 
+            border-radius: 50%; color: #fff; text-decoration: none; transition: 0.3s;
+        }
+        .social-icons a:hover { background: var(--primary); transform: translateY(-3px); }
+        
+        .footer-bottom { 
+            text-align: center; border-top: 1px solid rgba(255,255,255,0.1); 
+            padding-top: 20px; color: #94a3b8; font-size: 0.85rem; 
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .menu-toggle { display: block; }
+            .form-box { padding: 20px; }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+   <div class="logo" onclick="window.scrollTo(0,0)" style="display: flex; align-items: center; gap: 10px;">
+    <span style="font-size: 1.8rem; color: var(--primary);">
+        <i class="fas fa-code"></i>
+    </span>
+    <div>
+        <span style="color: var(--text-main); font-weight: 900; font-size: 1.4rem; font-style: italic;">B.Tech</span>
+        <span style="color: #fff; background: var(--accent); padding: 0 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 5px;">HUB</span>
+    </div>
+</div>
+        
+        <div class="nav-right">
+            <div class="nav-menu">
+                <a class="nav-item active" onclick="window.scrollTo(0,0)" id="nav-home">Home</a>
+                <a class="nav-item" href="#about-section">About</a>
+                <a class="nav-item" href="#contribute-section">Contribute</a>
+                <a class="nav-item" href="#feedback-section">Feedback</a>
+            </div>
+
+            <button class="theme-btn" onclick="cycleTheme()" title="Toggle Theme">
+                <i class="fas fa-moon" id="theme-icon"></i>
+            </button>
+            
+            <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+        </div>
+    </nav>
+
+    <main class="main-container">
+
+        <section id="view-home" class="page-view active-view">
+            <div class="hero">
+                <h1>JNTUH Academic Hub</h1>
+                
+                <div class="subtitle">
+                    <span class="crumb-item" id="crumb-year" onclick="resetStages()">Year</span> 
+                    &nbsp; <i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--text-muted);"></i> &nbsp; 
+                    <span class="crumb-item" id="crumb-branch" onclick="reSelectBranch()">Branch</span> 
+                    &nbsp; <i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--text-muted);"></i> &nbsp; 
+                    <span class="crumb-item" id="crumb-sem" onclick="reSelectSem()">Semester</span> 
+                    &nbsp; <i class="fas fa-chevron-right" style="font-size:0.7rem; color:var(--text-muted);"></i> &nbsp; 
+                    <span>Resources</span> 
+                </div>
+
+                <p>Ee Notes Chaduvukoni Pass Avvu Mawa. Ni Daggara Emina Notes Unte send Cheyi Update Cheddam.</p>
+
+                </div>
+
+            <div id="resource-selector">
+
+               <div class="ticker-box">
+                        <span class="ticker-label">NEW</span>
+                        <marquee>R25 1ST YEAR NOTES UPDATED FOR 1ST YEAR STUDENTS &nbsp;&nbsp; • &nbsp;&nbsp; ALL JNTUH SYLLABUS UPDATED &nbsp;&nbsp; • &nbsp;&nbsp; CHECK CONTRIBUTE SECTION TO UPLOAD NOTES</marquee>
+                    </div>
+                
+                <div id="stage-year" class="section-wrapper active-stage">
+                    <div class="stage-nav"><span class="stage-title">Step 01 / Select Year</span></div>
+                    <div class="card-grid">
+                        <div class="option-card year-card-1" onclick="selectYear('1')">
+                            <i class="fa-solid fa-1"></i><h3>1st Year</h3>
+                        </div>
+                        <div class="option-card year-card-2" onclick="selectYear('2')">
+                            <i class="fa-solid fa-2"></i><h3>2nd Year</h3>
+                        </div>
+                        <div class="option-card year-card-3" onclick="selectYear('3')">
+                            <i class="fa-solid fa-3"></i><h3>3rd Year</h3>
+                        </div>
+                        <div class="option-card year-card-4" onclick="selectYear('4')">
+                            <i class="fa-solid fa-4"></i><h3>4th Year</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="stage-branch" class="section-wrapper">
+                    <div class="stage-nav">
+                        <span class="stage-title">Step 02 / Select Branch</span>
+                        <button class="back-link" onclick="resetStages()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    </div>
+                    <div class="card-grid">
+                        <div class="option-card" onclick="selectBranch('CSE')">
+                            <i class="fa-solid fa-laptop-code"></i><h3>CSE</h3>
+                        </div>
+                        <div class="option-card" onclick="selectBranch('CSM')">
+                            <i class="fa-solid fa-brain"></i><h3>CSM</h3>
+                        </div>
+                        <div class="option-card" onclick="selectBranch('CSD')">
+                            <i class="fa-solid fa-database"></i><h3>CSD</h3>
+                        </div>
+                        <div class="option-card" onclick="selectBranch('ECE')">
+                            <i class="fa-solid fa-microchip"></i><h3>ECE</h3>
+                        </div>
+                        <div class="option-card" onclick="selectBranch('EEE')">
+                            <i class="fa-solid fa-bolt"></i><h3>EEE</h3>
+                        </div>
+                        <div class="option-card" onclick="selectBranch('Civil')">
+                            <i class="fa-solid fa-building-columns"></i><h3>Civil</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="stage-sem" class="section-wrapper">
+                    <div class="stage-nav">
+                        <span class="stage-title">Step 03 / Select Semester</span>
+                        <button class="back-link" onclick="reSelectBranch()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    </div>
+                    <div class="card-grid">
+                        <div class="option-card" onclick="selectSem('1')"><i class="fa-regular fa-circle"></i><h3>Semester I</h3></div>
+                        <div class="option-card" onclick="selectSem('2')"><i class="fa-solid fa-circle-half-stroke"></i><h3>Semester II</h3></div>
+                    </div>
+                </div>
+
+                <div id="stage-subjects" class="section-wrapper">
+                    <div class="stage-nav">
+                        <span class="stage-title" id="subject-stage-title">Select Subject</span>
+                        <button class="back-link" onclick="reSelectSem()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab('notes', this)">Notes</button>
+                        <button class="tab-btn" onclick="switchTab('syllabus', this)">Syllabus</button>
+                        <button class="tab-btn" onclick="switchTab('papers', this)">Papers</button>
+                    </div>
+
+                    <div id="subject-list-container"></div>
+                </div>
+
+                <div id="stage-units" class="section-wrapper">
+                    <div class="stage-nav">
+                        <span class="stage-title" id="unit-stage-title">Subject Units</span>
+                        <button class="back-link" onclick="showStage('stage-subjects')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                    </div>
+                    <div id="unit-list-container"></div>
+                </div>
+
+            </div>
+
+            <div id="about-section" class="home-section-container">
+                <div class="hero">
+                    <h2>About JNTUH Notes</h2>
+                    <p>Your dedicated portal for simplified curriculum access.</p>
+                </div>
+
+                <div>
+                <p style="text-align: center; color: var(--text-muted); max-width: 800px; margin: 0 auto 0px;">
+                    This is a dedicated academic portal designed to simplify the life of JNTUH B.Tech students. We combine modern technology with academic needs.
+                </p>
+                    </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                      <i class="fas fa-book-open feature-icon"></i>
+                      <h3>Latest regulations</h3>
+                      <p>Our syllabus data is regularly updated to match the most recent JNTUH regulations.</p>
+                    </div>
+              
+                    <div class="feature-card">
+                      <i class="fas fa-mobile-alt feature-icon"></i>
+                      <h3>Student Friendly</h3>
+                      <p>Optimized for mobile phones, tablets, and desktops so you can study anywhere.</p>
+                    </div>
+              
+                    <div class="feature-card">
+                      <i class="fas fa-check-circle feature-icon"></i>
+                      <h3>Verified Content</h3>
+                      <p>All syllabus topics are cross-verified by Admin.</p>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="contribute-section" class="home-section-container">
+                <div class="hero">
+                    <h2>Contribute Notes</h2>
+                    <p>Help your juniors & friends by uploading notes.</p>
+                </div>
+
+                <div class="form-box" style="text-align:center; padding: 40px; border: 1px solid var(--primary);">
+                    
+                    <i class="fab fa-google-drive" style="font-size: 4rem; color: var(--primary); margin-bottom: 20px;"></i>
+                    
+                    <h3 style="color: var(--text-main); margin-bottom: 10px;">Upload via Google Form</h3>
+                    
+                    <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 1rem; line-height: 1.6;">
+                        This is the most user-friendly way!<br>
+                        Click below to open our <strong>Google Form</strong> and upload your PDF safely.
+                    </p>
+
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSegkOEdqjeAmGlewWSC2FpTyby7VqDevxEl-YPgqcJi8s_b6A/viewform" 
+                       target="_blank"
+                       class="submit-btn" 
+                       style="display: inline-block; text-decoration: none; padding: 15px 30px; font-size: 1.1rem; width: auto;">
+                        <i class="fas fa-cloud-upload-alt"></i> Open Upload Form
+                    </a>
+                    
+                    <p style="margin-top: 25px; font-size: 0.85rem; color: var(--text-muted); opacity: 0.8;">
+                        * Your files will be securely saved to our database.
+                    </p>
+                </div>
+            </div>
+
+            <div id="feedback-section" class="home-section-container">
+                <div class="hero">
+                    <h2>Send Us Feedback</h2>
+                    <p>Found a bug? Have a suggestion? Let us know!</p>
+                </div>
+                <div class="form-box">
+                    <form action="mailto:techmindfactss@gmail.com" method="post" enctype="text/plain">
+                      <div class="input-group">
+                        <label>Your Name</label>
+                        <input type="text" name="Name" placeholder="Your Name" required>
+                      </div>
+                      <div class="input-group">
+                        <label>Your Email</label>
+                        <input type="email" name="Email" placeholder="yourmailid@example.com" required>
+                      </div>
+                      <div class="input-group">
+                        <label>Message</label>
+                        <textarea name="Message" rows="5" placeholder="Write your feedback here..." required></textarea>
+                      </div>
+                      <button type="submit" class="submit-btn">Send via Email App <i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="footer-content">
+          <div class="footer-col">
+            <h3>JNTUH NOTES</h3>
+            <p>Your one-stop destination for the complete 4-year B.Tech curriculum, notes, and previous year questions.</p>
+            <div class="social-icons">
+              <a href="mailto:techmindfactss@gmail.com"><i class="fas fa-envelope"></i></a>
+              <a href="https://twitter.com/GorityalaManoj"><i class="fab fa-twitter"></i></a>
+              <a href="https://www.instagram.com/call_me_mani_2"><i class="fab fa-instagram"></i></a>
+              <a href="https://www.linkedin.com/in/manojkumargorityala"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+      
+          <div class="footer-col">
+            <h3>Quick Links</h3>
+            <div class="footer-links">
+              <a href="#" onclick="window.scrollTo(0,0)"> <i class="fas fa-angle-right"></i> Home</a>
+              <a href="#about-section"> <i class="fas fa-angle-right"></i> About Us</a>
+              <a href="#contribute-section"> <i class="fas fa-angle-right"></i> Contribute</a>
+              <a href="#feedback-section"> <i class="fas fa-angle-right"></i> Feedback</a>
+            </div>
+          </div>
+      
+          <div class="footer-col">
+            <h3>Contact Us</h3>
+            <div class="footer-links">
+              <a href="#"> <i class="fas fa-map-marker-alt"></i> Hyderabad, India</a>
+              <a href="#"> <i class="fas fa-envelope"></i> techmindfactss@gmail.com</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+         <bold> <p>© 2025 JNTUH NOTES Portal. All Rights Reserved. | </bold>
+         <bold style="color: yellow;">Designed By Manoj kumar Gorityala</bold> </p>
+        </div>
+    </footer>
+
+    <script>
+        // --- FILE NAME DISPLAY FUNCTION ---
+        function showFileName(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files.length > 0) {
+                display.innerText = "Selected: " + input.files[0].name;
+                display.style.color = "var(--primary)";
+            } else {
+                display.innerText = "";
+            }
+        }
+
+        // --- MOBILE MENU ---
+        const menuBtn = document.querySelector('.menu-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        menuBtn.addEventListener('click', () => {
+            navMenu.style.display = navMenu.style.display === 'flex' ? 'none' : 'flex';
+            navMenu.style.flexDirection = 'column';
+            navMenu.style.position = 'absolute';
+            navMenu.style.top = '100%';
+            navMenu.style.left = '0';
+            navMenu.style.width = '100%';
+            navMenu.style.background = getComputedStyle(document.body).getPropertyValue('--bg-body');
+            navMenu.style.padding = '20px';
+            navMenu.style.borderBottom = '1px solid #333';
+        });
+
+        // ==========================================
+        //  THEME LOGIC (Dark -> Light -> System)
+        // ==========================================
+        const themes = ['dark', 'light', 'system'];
+        let currentThemeIndex = 0;
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Load saved theme or default to 'system'
+        const savedTheme = localStorage.getItem('theme') || 'system';
+        currentThemeIndex = themes.indexOf(savedTheme);
+        if (currentThemeIndex === -1) currentThemeIndex = 0; // Fallback
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            let effectiveTheme = theme;
+
+            if (theme === 'system') {
+                const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                effectiveTheme = systemDark ? 'dark' : 'light';
+                themeIcon.className = 'fas fa-desktop'; // System Icon
+            } else if (theme === 'light') {
+                themeIcon.className = 'fas fa-sun'; // Light Icon
+            } else {
+                themeIcon.className = 'fas fa-moon'; // Dark Icon
+            }
+
+            html.setAttribute('data-theme', effectiveTheme);
+            localStorage.setItem('theme', theme);
+        }
+
+        function cycleTheme() {
+            currentThemeIndex = (currentThemeIndex + 1) % themes.length;
+            const newTheme = themes[currentThemeIndex];
+            applyTheme(newTheme);
+        }
+
+        // Apply on load
+        applyTheme(savedTheme);
+
+        // Listen for system changes if in system mode
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'system') {
+                applyTheme('system');
+            }
+        });
+
+        // --- LOADER ANIMATION FUNCTION ---
+        function showLoader(element) {
+            // Find the icon inside the clicked element
+            let icon = element.querySelector('i');
+            if(icon && icon.classList.contains('fa-file-arrow-down')) {
+                // Change icon to Spinner
+                icon.classList.remove('fa-file-arrow-down');
+                icon.classList.add('fa-spinner');
+                
+                // Optional: Reset after 3 seconds (simulating load)
+                setTimeout(() => {
+                    icon.classList.remove('fa-spinner');
+                    icon.classList.add('fa-file-arrow-down');
+                }, 3000);
+            }
+        }
+
+
+        // ==========================================
+        //  FULL DATABASE (Nested)
+        //  FIXED: Replaced all '\' with '/' for web paths
+        // ==========================================
+        
+        const database = {
+            // ================= YEAR 1 =================
+            "1": { 
+                "CSE": { 
+                    "1": { 
+                        "notes": [ 
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                   { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }
+                                ]
+                            }, 
+                            { 
+                                name:"Chemistry",    
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"PPS", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"English", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EDC", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                        ], 
+                        "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Chemistry Syllabus", link:"Syllabus/R25 chemistry Syllabus.pdf"}, {name:"PPS Syllabus", link:"Syllabus/R25 PPS Syllabus.pdf"}, {name:"English Syllabus", link:"Syllabus/R25 English Syllabus.pdf"}, {name:"EDC Syllabus", link:"Syllabus/R25 EDC Syllabus.pdf"},], 
+                        "papers": [{name:"2023 PYQ", link:"#"}]
+                    },
+                    "2": { 
+                        "notes": [ 
+                            { 
+                                name:"Maths-II", 
+                                units: [
+                                    { name: "Unit 1: ODE", link: "./pdfs/cse_1_2_maths_u1.pdf" },
+                                    { name: "Unit 2: Higher Order ODE", link: "./pdfs/cse_1_2_maths_u2.pdf" },
+                                    { name: "Unit 3: Laplace", link: "./pdfs/cse_1_2_maths_u3.pdf" },
+                                    { name: "Unit 4: Vector Diff", link: "./pdfs/cse_1_2_maths_u4.pdf" },
+                                    { name: "Unit 5: Vector Int", link: "./pdfs/cse_1_2_maths_u5.pdf" }
+                                ]
+                            } 
+                        ], 
+                        "syllabus": [], "papers": [] 
+                    }
+                },
+                "CSM": {
+                    "1": {
+                        "notes": [
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                  { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }
+                                  
+                                ]
+                            },
+                            { 
+                                name:"Advance Engineering Physics", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"PPS", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"BEE", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            }, 
+                      ], 
+                    "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Advance Engineering Physics Syllabus", link:"Syllabus/R25 ADVANCED ENGINEERING PHYSICS Syllabus.pdf"}, {name:"PPS Syllabus", link:"Syllabus/R25 PPS Syllabus.pdf"}, {name:"BEE Syllabus", link:"Syllabus/R25 BEE Syllabus.pdf"}, {name:"EG Syllabus", link:"Syllabus/R25 Engineering Drawing Syllabus.pdf"},],                        "2": { "notes": [], "syllabus": [], "papers": [] } 
+                    },
+                    "2": { "notes": [], "syllabus": [], "papers": [] }
+                },
+                "CSD": { 
+                    "1": {
+                      "notes": [
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                    { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }
+                                    
+                                ]
+                            },
+                            { 
+                                name:"Advance Engineering Physics", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"PPS", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"BEE", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            }, 
+                      ], 
+                    "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Advance Engineering Physics Syllabus", link:"Syllabus/R25 ADVANCED ENGINEERING PHYSICS Syllabus.pdf"}, {name:"PPS Syllabus", link:"Syllabus/R25 PPS Syllabus.pdf"}, {name:"BEE Syllabus", link:"Syllabus/R25 BEE Syllabus.pdf"}, {name:"EG Syllabus", link:"Syllabus/R25 Engineering Drawing Syllabus.pdf"},],                        "2": { "notes": [], "syllabus": [], "papers": [] } 
+                    },
+                    "2": { "notes": [], "syllabus": [], "papers": [] }
+                },
+                "ECE": { 
+                    "1": { 
+                        "notes": [
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                  { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }                              
+                                ]
+                            },
+                            { 
+                                name:"Advance Engineering Physics", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"PPS", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"English", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"Introduction to Electrical Engineering", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                        ],  
+                    "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Advance Engineering Physics Syllabus", link:"Syllabus/R25 ADVANCED ENGINEERING PHYSICS Syllabus.pdf"}, {name:"PPS Syllabus", link:"Syllabus/R25 PPS Syllabus.pdf"}, {name:"English Syllabus", link:"Syllabus/R25 English Syllabus.pdf"}, {name:"EG Syllabus", link:"Syllabus/R25 Engineering Drawing Syllabus.pdf"}, {name:"Introduction to Electrical Enginerring Syllabus", link:"Syllabus/R25 INTRODUCTION TO ELECTRICAL ENGINEERING Syllabus.pdf"}],
+                        "2": { "notes": [], "syllabus": [], "papers": [] } 
+                    },
+                    "2": { "notes": [], "syllabus": [], "papers": [] } 
+                },
+                "EEE": { 
+                    "1": { 
+                        "notes": [ 
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                   { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"Advance Engineering Physics", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"PPS", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"English", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"Electrical Circut", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+
+                        ], 
+                        "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Advance Engineering Physics Syllabus", link:"Syllabus/R25 ADVANCED ENGINEERING PHYSICS Syllabus.pdf"}, {name:"PPS Syllabus", link:"Syllabus/R25 PPS Syllabus.pdf"}, {name:"English Syllabus", link:"Syllabus/R25 English Syllabus.pdf"}, {name:"EG Syllabus", link:"Syllabus/R25 Engineering Drawing Syllabus.pdf"},{name:"Electrical Circut Syllabus", link:"Syllabus/R25 ELECTRICAL CIRCUITS – I Syllabus.pdf"},],
+                        "papers": [] }, 
+                    "2": { "notes": [], "syllabus": [], "papers": [] } 
+                },
+                "Civil": { 
+                    "1": { 
+                        "notes": [
+                            { 
+                                name:"Maths-I", 
+                                units: [
+                                    { name: "Matrices and Calculus Notes", link: "R25 1-1 Notes/M1 Notes.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"Advance Engineering Physics", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"C Program and Data Structure", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"English", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"EG", 
+                                units: [
+                                    { name: "Unit 1: Atomic Structure", link: "./pdfs/cse_1_1_chem_u1.pdf" },
+                                    { name: "Unit 2: Water Tech", link: "./pdfs/cse_1_1_chem_u2.pdf" },
+                                    { name: "Unit 3: Batteries", link: "./pdfs/cse_1_1_chem_u3.pdf" },
+                                    { name: "Unit 4: Corrosion", link: "./pdfs/cse_1_1_chem_u4.pdf" },
+                                    { name: "Unit 5: Spectroscopy", link: "./pdfs/cse_1_1_chem_u5.pdf" }
+                                ]
+                            },  
+                        ],  
+                        "syllabus": [{name:"Maths-I Syllabus", link:"Syllabus/R25 M1 Syllabus.pdf"}, {name:"Advance Engineering Physics Syllabus", link:"Syllabus/R25 ADVANCED ENGINEERING PHYSICS Syllabus.pdf"}, {name:"C Programming Data Structure Syllabus", link:"Syllabus/R25  C PROGRAMMING AND DATA STRUCTURES Syllabus.pdf"}, {name:"English Syllabus", link:"Syllabus/R25 English Syllabus.pdf"}, {name:"EG Syllabus", link:"Syllabus/R25 Engineering Drawing Syllabus.pdf"},],
+
+                        "2": { "notes": [], "syllabus": [], "papers": [] } 
+                    },
+                    "2": { "notes": [], "syllabus": [], "papers": [] }
+                }
+            },
+
+            // ================= YEAR 2 =================
+            "2": { 
+                "CSE": {
+                    "1": { 
+                        "notes": [ 
+                            { 
+                                name:"Data Structures", 
+                                units: [
+                                    { name: "Unit 1: Intro to DS", link: "./pdfs/cse_2_1_ds_u1.pdf" },
+                                    { name: "Unit 2: Stacks/Queues", link: "./pdfs/cse_2_1_ds_u2.pdf" },
+                                    { name: "Unit 3: Trees", link: "./pdfs/cse_2_1_ds_u3.pdf" },
+                                    { name: "Unit 4: Graphs", link: "./pdfs/cse_2_1_ds_u4.pdf" },
+                                    { name: "Unit 5: Searching", link: "./pdfs/cse_2_1_ds_u5.pdf" }
+                                ]
+                            },
+                            { 
+                                name:"Python Prog", 
+                                units: [
+                                    { name: "Unit 1: Basics", link: "./pdfs/cse_2_1_python_u1.pdf" },
+                                    { name: "Unit 2: Functions", link: "./pdfs/cse_2_1_python_u2.pdf" },
+                                    { name: "Unit 3: Modules", link: "./pdfs/cse_2_1_python_u3.pdf" },
+                                    { name: "Unit 4: OOPS", link: "./pdfs/cse_2_1_python_u4.pdf" },
+                                    { name: "Unit 5: Testing", link: "./pdfs/cse_2_1_python_u5.pdf" }
+                                ]
+                            }
+                        ], 
+                        "syllabus": [], "papers": [] 
+                    },
+                    "2": { "notes": [], "syllabus": [], "papers": [] }
+                },
+                "ECE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "EEE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSM": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSD": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "Civil": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } }
+            },
+
+            // ================= YEAR 3 =================
+            "3": {
+                "CSE": { 
+                     "1": { "notes": [], "syllabus": [], "papers": [] },
+                     "2": { "notes": [], "syllabus": [], "papers": [] }
+                },
+                "ECE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "EEE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSM": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSD": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "Civil": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } }
+            },
+
+            // ================= YEAR 4 =================
+            "4": {
+                "CSE": { 
+                     "1": { "notes": [], "syllabus": [], "papers": [] },
+                     "2": { "notes": [], "syllabus": [], "papers": [] }
+                },
+                "ECE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "EEE": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSM": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "CSD": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } },
+                "Civil": { "1": { "notes": [], "syllabus": [], "papers": [] }, "2": { "notes": [], "syllabus": [], "papers": [] } }
+            }
+        };
+
+        let state = { year: '', branch: '', sem: '' };
+        let currentTab = 'notes';
+
+        // --- STAGE LOGIC ---
+        function showStage(stageId) {
+            // Hide all stages
+            document.querySelectorAll('#resource-selector .section-wrapper').forEach(el => el.style.display = 'none');
+            // Show requested stage
+            const el = document.getElementById(stageId);
+            if(el) {
+                el.style.display = 'block';
+                el.classList.add('active-stage');
+            }
+            // Auto Scroll to the top of the resource selector
+            document.getElementById('resource-selector').scrollIntoView({ behavior: 'smooth' });
+            
+            updateBreadcrumbs();
+        }
+
+        function updateBreadcrumbs() {
+            // Year Crumb
+            const yearEl = document.getElementById('crumb-year');
+            yearEl.innerText = state.year ? state.year + " Year" : "Year";
+            yearEl.className = state.year ? "crumb-item crumb-active" : "crumb-item";
+            
+            // Branch Crumb
+            const branchEl = document.getElementById('crumb-branch');
+            branchEl.innerText = state.branch ? state.branch : "Branch";
+            branchEl.className = state.branch ? "crumb-item crumb-active" : "crumb-item";
+
+            // Sem Crumb
+            const semEl = document.getElementById('crumb-sem');
+            semEl.innerText = state.sem ? "Sem " + state.sem : "Semester";
+            semEl.className = state.sem ? "crumb-item crumb-active" : "crumb-item";
+        }
+
+        // --- NAVIGATION LOGIC (RESET & SELECT) ---
+        function resetStages() { 
+            state = { year: '', branch: '', sem: '' }; 
+            showStage('stage-year'); 
+        }
+
+        // Keep Year, Reset Branch
+        function reSelectBranch() {
+            if (state.year) {
+                state.branch = ''; 
+                state.sem = '';    
+                showStage('stage-branch'); 
+            }
+        }
+
+        // Keep Year & Branch, Reset Sem
+        function reSelectSem() {
+            if (state.year && state.branch) {
+                state.sem = '';    
+                showStage('stage-sem'); 
+            }
+        }
+
+        function selectYear(y) { state.year = y; showStage('stage-branch'); }
+        function selectBranch(b) { state.branch = b; showStage('stage-sem'); }
+        function selectSem(s) { state.sem = s; showStage('stage-subjects'); renderSubjects(); }
+
+        // --- TAB SWITCHING ---
+        function switchTab(tabName, btn) {
+            currentTab = tabName;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderSubjects();
+        }
+
+        // --- RENDER SUBJECTS LIST ---
+        function renderSubjects() {
+            const container = document.getElementById('subject-list-container');
+            const title = document.getElementById('subject-stage-title');
+            
+            // Set Title
+            title.innerText = `${state.branch} / ${state.year}-${state.sem} Subjects`;
+
+            // Traverse the Nested Database safely
+            let items = [];
+            try {
+                // Look for Year -> Branch -> Sem
+                const yearData = database[state.year];
+                if (yearData) {
+                    const branchData = yearData[state.branch];
+                    if (branchData) {
+                        const semData = branchData[state.sem];
+                        if (semData) {
+                            items = semData[currentTab] || [];
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log("Data not found", e);
+            }
+
+            if(items.length === 0) {
+                container.innerHTML = `<div style="padding:2rem; color:var(--text-muted); text-align:center;">
+                    <i class="fa-regular fa-folder-open" style="font-size:2rem; margin-bottom:10px;"></i><br>
+                    No resources found for this selection.<br>
+                    <small>Check back later or contribute!</small>
+                </div>`;
+                return;
+            }
+
+            let html = '';
+            items.forEach((item, index) => {
+                let clickAction = '';
+                let icon = '';
+
+                if (currentTab === 'notes') {
+                    clickAction = `onclick="openUnits(${index})"`;
+                    icon = '<i class="fa-solid fa-chevron-right" style="font-size:1rem; color:var(--text-muted);"></i>';
+                } else {
+                    clickAction = `onclick="window.open('${item.link}', '_blank')"`;
+                    icon = '<i class="fa-solid fa-download" style="color:var(--primary);"></i>';
+                }
+
+                html += `
+                    <div class="file-item" ${clickAction}>
+                        <div>
+                            <h4 style="margin:0; font-size:1rem;">${item.name}</h4>
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0 0;">
+                                ${state.branch} | ${state.year}-${state.sem}
+                            </p>
+                        </div>
+                        ${icon}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // --- OPEN UNITS (UPDATED) ---
+        function openUnits(index) {
+            let units = [];
+            let subjectName = "";
+
+            try {
+                const data = database[state.year][state.branch][state.sem].notes[index];
+                units = data.units || [];
+                subjectName = data.name;
+            } catch(e) { console.log(e); }
+
+            document.getElementById('unit-stage-title').innerText = subjectName + " / Units";
+            const container = document.getElementById('unit-list-container');
+            
+            if(units.length === 0) {
+                container.innerHTML = `<div style="padding:2rem; color:var(--text-muted); text-align:center;">No units uploaded yet.</div>`;
+            } else {
+                let html = '';
+                units.forEach(unit => {
+                    let hasLink = unit.link && unit.link !== '#';
+                    // Added showLoader(this) to trigger animation when clicked
+                    let linkAttr = hasLink ? `href="${unit.link}" target="_blank" onclick="showLoader(this)"` : `onclick="alert('File coming soon')"`;
+                    let cursorStyle = hasLink ? '' : 'cursor: default; opacity: 0.6;';
+                    let iconColor = hasLink ? 'var(--accent)' : 'var(--text-muted)';
+
+                    html += `
+                        <a class="file-item" ${linkAttr} style="${cursorStyle}">
+                            <div>
+                                <h4 style="margin:0; font-size:0.95rem;">${unit.name}</h4>
+                                <p style="font-size:0.75rem; color:var(--text-muted); margin:2px 0 0 0;">PDF Document</p>
+                            </div>
+                            <i class="fa-solid fa-file-arrow-down" style="color:${iconColor};"></i>
+                        </a>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            showStage('stage-units');
+        }
+
+        // Start at home
+        showStage('stage-year');
+    </script>
+</body>
+</html>
